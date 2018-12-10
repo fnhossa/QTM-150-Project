@@ -1,0 +1,196 @@
+---
+title: "QTM 150 Project"
+author: "Farhan Hossain"
+header-includes:
+    - \usepackage{setspace}\doublespacing
+date: "December 10, 2018"
+output: html_document
+---
+# Did Stephen Curry play better in the NBA after his injury?
+![](https://cdn.vox-cdn.com/thumbor/mEDI9JAAxFELxfUIZQgheRzMLsY=/0x0:3990x2660/1200x800/filters:focal(0x0:3990x2660)/cdn.vox-cdn.com/uploads/chorus_image/image/6682305/20130113_lbm_aq2_167.0.jpg)
+
+## Why I chose this question to investigate:
+The question that I would like to explore in this project is whether or not NBA players play better after their injuries. All NBA fans have heard of the Golden State Warrior's shooter sensation, 2 time NBA Champion Stephen Curry. And those of us that have followed him since his rookie year know that his professional basketball career has been plagued by a multitude of injuries. When "valuing" a player, the usual metrics like points per game, field goal percentage, three-point shooting percentage, assists, rebounds, etc. are all factored in. However, many players are passed up on in trade deals or draft selections because of their injury risk factor. For Stephen Curry, this has not happened. Trade dealings have never mentioned Stephen Curry and at one point he was the highest paid player in the NBA. This makes me wonder how Stephen Curry has performed post-injury, compared to pre-injury, and why he is still such a valuable asset to the Golden State Warriors. This study is also useful in examining the successfullness of physical rehab or recovery efforts put in place by NBA teams. I hypothesize that the performance of a basketball player after injury will decrease compared to pre-injury and we should see this is Steph Curry's performance as well.
+
+When this QTM project was assigned to us, at first, I was a little scared since I couldn't think of something that I wanted to test that would actually interest me. But soon, after watching another NBA game with my roommate, I was intrigued by Stephen Curry's injury history. Hence, in this project, I will be conducting a test to see the performance before and after his injuries to see the impact on his performance. Additionally, for this project an experiment was to be devised as well as an explanation for any external data set used. After meeting with Professor Jacobson, I was inspired to explore Kaggle and other blogs with information about Stephen Curry's in-game performance. 
+
+## Data Collection
+With the performance information collected from an [external data set](https://www.basketball-reference.com/players/c/curryst01/gamelog/2018), I created my own manipulated data frame to compare Stephen Curry's 10-day game performance before and after an inactive period, or injury related sit out. The site provided me with in-game stats for every game Stephen Curry has played or not played in the NBA. I cleaned the data up by only including if Curry played in the game, field goal percentage, three point percentage, points, free throw percentage, and the number of assists. This is because Curry's primary roles on the team are point guard (focus on assists) and shooting guard (focus on three-pointers). 
+
+Additional background information from [Fox Sports](https://www.foxsports.ph/basketball/nba/824719/a-history-of-steph-currys-ankle-injuries/) about the history of Stephen Curry's injuries narrowed my scope to looking into the 2012-2013 season. This season was a focus because prior to the start he signed a $44 million contract extension with the Golden State Warriors, while undergoing rehab. Some seasons were ignored because Stephen Curry remained relatively healthy and the 2011-2012 seasons was ignored due to a lockout shortening the amount of games played in the season. The following section summarizes Curry's performance overall in the selected season and then compares his performance before and after an injury instance. For additional information about the data used in this experiment explore [my GitHub repository](https://github.com/fnhossa/QTM-150-Project).Uploaded there are data sets regarding other seasons Curry played and they can be uploaded into R in order to look at Curry's performance in other seasons. 
+
+## Data Frame
+*Creating a data frame from the data collected*
+```{r}
+library(data.table)
+szn1213 <- fread('https://raw.githubusercontent.com/fnhossa/QTM-150-Project/master/Curry%2012-13.csv')
+```
+Displayed are the summary statistics for the season:
+
+```{r, message=FALSE}
+dfnew1 <- data.frame(szn1213$`FG%`, szn1213$`3P%`, szn1213$AST, szn1213$PTS, szn1213$`FT%`)
+library(Hmisc)
+Hmisc::describe(dfnew1)
+colMeans(dfnew1, na.rm=TRUE)
+```
+
+# Visualizing the Data
+Displayed below are some visualizations of Stephen Curry's performance for the  selected season.The metrics studied were:
+
+* Field Goal Percentage
+
+* Three Point Percentage
+
+* Assists
+
+* Points Per Game
+
+* Free Throw Percentage
+
+Here is Curry's performance in the 2012-2013 Season:
+```{r, echo=FALSE}
+hist(dfnew1$szn1213..FG..,
+     main="Histogram for Season '12-'13 FG%", 
+     xlab="Field Goal Percentage", 
+     border="blue", 
+     col="yellow",
+     breaks=10)
+hist(dfnew1$szn1213..3P..,
+     main="Histogram for Season '12-'13 3P%", 
+     xlab="Three Point Percentage", 
+     border="blue", 
+     col="yellow",
+     breaks=10)
+hist(dfnew1$szn1213.AST,
+     main="Histogram for Season '12-'13 Assists", 
+     xlab="Assists", 
+     border="blue", 
+     col="yellow",
+     breaks=10)
+hist(dfnew1$szn1213.PTS,
+     main="Histogram for Season '12-'13 Points Per Game", 
+     xlab="Points Per Game", 
+     border="blue", 
+     col="yellow",
+     breaks=10)
+hist(dfnew1$szn1213..FT..,
+     main="Histogram for Season '12-'13 FT%", 
+     xlab="Free Throw Percentage", 
+     border="blue", 
+     col="yellow",
+     breaks=10)
+```
+
+# Identifying injury occurences
+To identify which injuries to observe in all season I picked, I browsed the data frame and consulted the Fox Sports article. The injury date I chose was: 
+
+* 2012-2013 Season - Jan. 16 2013
+
+# Comparing performance before and after injury
+After identifying the injury occurrence (Game 37), I browsed the data frame to find the 10 games before and after the injury that Curry played in. Then, I compared the average performance and studied visuals of the performance. Game 26-36 were the 10 games before the injury. Games 39-44 and 47-50 were the 10 games after the injury that he played in.
+```{r}
+preinjury <- dfnew1[27:36,]
+library(Hmisc)
+Hmisc::describe(preinjury)
+colMeans(preinjury, na.rm=TRUE)
+
+postinjury <- dfnew1[c(39:44,47:50),]
+library(Hmisc)
+Hmisc::describe(postinjury)
+colMeans(postinjury, na.rm=TRUE)
+```
+##Here are some of the visuals I constructed for Curry's performance pre-injury:
+```{r, echo=FALSE}
+hist(preinjury$szn1213..FG..,
+     main="Histogram of FG% Pre-Injury", 
+     xlab="Field Goal Percentage", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(preinjury$szn1213..3P..,
+     main="Histogram of 3P% Pre-Injury", 
+     xlab="Three Point Percentage", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(dfnew1$szn1213.AST,
+     main="Histogram of Assists Pre-Injury", 
+     xlab="Assists", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(dfnew1$szn1213.PTS,
+     main="Histogram of Points Per Game Pre-Injury", 
+     xlab="Points Per Game", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(dfnew1$szn1213..FT..,
+     main="Histogram of FT% Pre-Injury", 
+     xlab="Free Throw Percentage", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+```
+
+##Here are some of the visuals I constructed for Curry's performance post-injury:
+```{r, echo=FALSE}
+hist(postinjury$szn1213..FG..,
+     main="Histogram of FG% Post-Injury", 
+     xlab="Field Goal Percentage", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(preinjury$szn1213..3P..,
+     main="Histogram of 3P% Post-Injury", 
+     xlab="Three Point Percentage", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(dfnew1$szn1213.AST,
+     main="Histogram of Assists Post-Injury", 
+     xlab="Assists", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(dfnew1$szn1213.PTS,
+     main="Histogram of Points Per Game Post-Injury", 
+     xlab="Points Per Game", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+hist(dfnew1$szn1213..FT..,
+     main="Histogram of FT% Post-Injury", 
+     xlab="Free Throw Percentage", 
+     border="yellow", 
+     col="blue",
+     breaks=10)
+```
+
+# Interpretation 
+Through the calculations above we discover this about Curry's performance before and after his injury:
+
+|Performance|Pre-Injury|Post-Injury|Percent Change|
+|---|---|---|---|---|
+|Average FG%|48%|43%|(5%)|
+|Average 3P%|52%|41%|(11%)|
+|Average Assists|7.3|6.9|(6%)|
+|Average Points Per Game|21.9|22.5|3%|
+|Average FT%|82%|98%|16%|
+
+Looking at the performance at face value, it seems like Curry experienced a decreased in his Field Goal percentage, Three Point percentage, and number of assists after his injury. On the flip side, he scored more points and had a higher Free Throw percentage. This discovery is a bit confusing, but it seems that for the most part his performance got a hit after his injury, thus proving my hypothesis. 
+
+#Limitations
+
+While the study does support my view, there are an array of limitations that have to be addressed. Listed are some factors to consider and some ideas I have to resolve them.
+
+* **Recovery time**: A player might take a long time to recover leading to 1) decreased performance due to time off from basketball or 2) increased performance due to an emphasis of basketball skills during rehab.
+  
+* **Restricted minutes post injury**: A player might not display increased or decreased performance due to a in-game time limitation placed on them. 
+
+* **Playoff contention**: Players may rush recovery and play harder if their team is in playoff contention. However, this could led to more injuries.
+
+* **Injury severity**: The severity of an injury may make a player wary of re-injury and prevent them playing as hard or risky.
+
+
+In the future, I hope to explore these limitations more and create a better model comparing multiple athletes. Additionally, anyone intersted in running the same analysis on any other injuries Steph Curry had can explore my Github to alter my code with different data.
